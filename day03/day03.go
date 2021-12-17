@@ -69,29 +69,80 @@ func part1() {
 		}
 
 		epsilon, err := strconv.ParseInt(epsilonBin, 2, 64)
+		if err != nil {
+				log.Fatal(err)
+		}
 		fmt.Println("Part1 Answer is: ", gamma*epsilon)
 }
 
 func part2() {
 		input := advent.ReadStringInput("day03/day03.txt")
 
-		var filteredInput []string
-		sum := 0
-		for i, s := range input {
-				if s[i] == '0' {
-						sum += -1
-				} else {
-						sum += 1
+		var filterOx = input
+		var filterCo = input
+
+		var oneArrOx []string
+		var zerArrOx []string
+
+		var oneArrCo []string
+		var zerArrCo []string
+
+		for i := 0; i < 12; i++ {
+				for _, s := range filterOx {
+						if s[i] == '0' {
+								zerArrOx = append(zerArrOx, s)
+						} else {
+								oneArrOx = append(oneArrOx, s)
+						}
+
 				}
+
+				for _, s := range filterCo {
+						if s[i] == '0' {
+								zerArrCo = append(zerArrCo, s)
+						} else {
+								oneArrCo = append(oneArrCo, s)
+						}
+				}
+
+				if len(filterOx) > 1 {
+						if len(zerArrOx) > len(oneArrOx) {
+								filterOx = zerArrOx
+						} else {
+								filterOx = oneArrOx
+						}
+				}
+
+				if len(filterCo) > 1 {
+						if len(oneArrCo) < len(zerArrCo) {
+								filterCo = oneArrCo
+						} else {
+								filterCo = zerArrCo
+						}
+				}
+
+				zerArrOx = []string{}
+				oneArrOx = []string{}
+
+				oneArrCo = []string{}
+				zerArrCo = []string{}
+
 		}
 
-		for i, s := range input {
-				if sum > 0 && s[i] == '1' {
-
-				}
+		ox, err := strconv.ParseInt(filterOx[0], 2, 64)
+		if err != nil {
+				log.Fatal(err)
 		}
+
+		co, err := strconv.ParseInt(filterCo[0], 2, 64)
+		if err != nil {
+				log.Fatal(err)
+		}
+
+		fmt.Println("Part2 Answer is: ", ox*co)
 }
 
 func main() {
 		part1()
+		part2()
 }
