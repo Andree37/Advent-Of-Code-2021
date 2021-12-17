@@ -13,6 +13,26 @@ type NumberStringInput struct {
 	Value int
 }
 
+func ReadStringInput(input string) []string {
+	var arr []string
+	f, err := os.Open(input)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func(f *os.File) {
+		err := f.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(f)
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		arr = append(arr, scanner.Text())
+	}
+	return arr
+}
+
 func ReadNumberStringInput(input string) []NumberStringInput {
 	var arr []NumberStringInput
 	f, err := os.Open(input)
