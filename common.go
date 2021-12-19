@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"log"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -21,6 +22,15 @@ type Cell struct {
 type Board struct {
 	Rows  [][]Cell
 	Found bool
+}
+
+type Point struct {
+	X int
+	Y int
+}
+
+type Line struct {
+	Points []Point
 }
 
 func ReadStringInput(input string) []string {
@@ -156,4 +166,79 @@ func ReadNumbersAndBoard(input string) ([]int, []Board) {
 	}
 
 	return inputs, boards
+}
+
+func ReadLines(input string) []Line {
+	lines := ReadStringInput(input)
+	var result []Line
+
+	for _, line := range lines {
+		strPoints := strings.Split(line, " -> ")
+		strStart := strings.Split(strPoints[0], ",")
+		strEnd := strings.Split(strPoints[1], ",")
+
+		xStart, _ := strconv.Atoi(strStart[0])
+		yStart, _ := strconv.Atoi(strStart[1])
+
+		xEnd, _ := strconv.Atoi(strEnd[0])
+		yEnd, _ := strconv.Atoi(strEnd[1])
+
+		startPoint := Point{X: xStart, Y: yStart}
+		endPoint := Point{X: xEnd, Y: yEnd}
+
+		points := []Point{startPoint, endPoint}
+
+		sort.Slice(points, func(i, j int) bool {
+			if points[i].X < points[j].X {
+				return true
+			} else if points[i].Y < points[j].Y && !(points[i].X > points[j].X) {
+				return true
+			} else {
+				return false
+			}
+		})
+
+		// find all intermediate points between start and end
+		horiz := xStart != xEnd
+		vert := yStart != yEnd
+
+		if horiz && vert {
+			for i := points[0].X + 1; i < points[1].X; i++ {
+				if points[0].X > points[1].X {
+					points = append(points, Point{X: points[0].X - i, Y: points[1].X + i})
+				} else if points[0].X < points[1].X {
+					if points[0].Y > points[1].Y {
+						var upper int
+						var step int
+						if points[0].Y > points[1].Y {
+							upper = points[0].Y
+							step = points[0].Y - points[1].Y
+						} else {
+							upper = points[1].Y
+							step = points[1].Y - points[0].Y
+						}
+						if points[0].X == points[1].Y || points[0].Y == points[1].X {
+							points = append(points, Point{X: i, Y: upper - i})
+						} else {
+							points = append(points, Point{X: i, Y: points[0].Y + step - i + points[1].Y})
+						}
+					} else {
+						points = append(points, Point{X: i, Y: points[0].Y + i - points[0].X})
+					}
+				}
+			}
+		} else if horiz {
+			for i := points[0].X + 1; i < points[1].X; i++ {
+				points = append(points, Point{X: i, Y: points[0].Y})
+			}
+		} else if vert {
+			for i := points[0].Y + 1; i < points[1].Y; i++ {
+				points = append(points, Point{Y: i, X: points[0].X})
+			}
+		}
+
+		result = append(result, Line{Points: points})
+	}
+
+	return result
 }
