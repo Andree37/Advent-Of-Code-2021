@@ -7,7 +7,7 @@ import (
 
 func part1() {
 	lines := advent.ReadLines("day05/day05.txt")
-	
+
 	board := make([][]uint8, 990)
 	for i := range board {
 		board[i] = make([]uint8, 990)

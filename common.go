@@ -107,6 +107,34 @@ func ReadNumberInput(input string) []int {
 	return arr
 }
 
+func ReadNumberInlineInput(input string) []int {
+	var arr []int
+	f, err := os.Open(input)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func(f *os.File) {
+		err := f.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(f)
+
+	scanner := bufio.NewScanner(f)
+	for scanner.Scan() {
+		line := scanner.Text()
+		for _, s := range strings.Split(line, ",") {
+			intVar, err := strconv.Atoi(s)
+			if err != nil {
+				log.Fatal(err)
+			}
+			arr = append(arr, intVar)
+		}
+
+	}
+	return arr
+}
+
 func ReadNumbersAndBoard(input string) ([]int, []Board) {
 	var inputs []int
 	var boards []Board
