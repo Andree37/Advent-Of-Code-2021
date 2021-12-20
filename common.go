@@ -202,6 +202,8 @@ func ReadLines(input string) []Line {
 		horiz := xStart != xEnd
 		vert := yStart != yEnd
 
+		var lastInsert int
+
 		if horiz && vert {
 			for i := points[0].X + 1; i < points[1].X; i++ {
 				if points[0].X > points[1].X {
@@ -209,21 +211,45 @@ func ReadLines(input string) []Line {
 				} else if points[0].X < points[1].X {
 					if points[0].Y > points[1].Y {
 						var upper int
-						var step int
+						var lwr int
 						if points[0].Y > points[1].Y {
 							upper = points[0].Y
-							step = points[0].Y - points[1].Y
+							lwr = points[1].Y
 						} else {
 							upper = points[1].Y
-							step = points[1].Y - points[0].Y
+							lwr = points[0].Y
 						}
 						if points[0].X == points[1].Y || points[0].Y == points[1].X {
 							points = append(points, Point{X: i, Y: upper - i})
 						} else {
-							points = append(points, Point{X: i, Y: points[0].Y + step - i + points[1].Y})
+							if points[0].Y < points[1].Y {
+								if lastInsert == 0 {
+									lastInsert = lwr + 1
+								} else {
+									lastInsert++
+								}
+							} else {
+								if lastInsert == 0 {
+									lastInsert = upper - 1
+								} else {
+									lastInsert--
+								}
+							}
+							points = append(points, Point{X: i, Y: lastInsert})
 						}
 					} else {
-						points = append(points, Point{X: i, Y: points[0].Y + i - points[0].X})
+						var lwr int
+						if points[0].Y > points[1].Y {
+							lwr = points[1].Y
+						} else {
+							lwr = points[0].Y
+						}
+						if lastInsert == 0 {
+							lastInsert = lwr + 1
+						} else {
+							lastInsert++
+						}
+						points = append(points, Point{X: i, Y: lastInsert})
 					}
 				}
 			}
