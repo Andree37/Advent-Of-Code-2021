@@ -59,8 +59,6 @@ func part2() {
 		simulateBucketDay(&buckets)
 	}
 
-	fmt.Println(buckets)
-
 	var sum = 0
 	for _, bucket := range buckets {
 		sum += bucket
