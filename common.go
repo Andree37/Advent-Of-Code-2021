@@ -33,6 +33,21 @@ type Line struct {
 	Points []Point
 }
 
+func ReadStringInputOutput(input string) ([]string, []string) {
+	var digits = ReadStringInput(input)
+
+	var inputs []string
+	var outputs []string
+
+	for _, digit := range digits {
+		var line = strings.Split(digit, "|")
+		inputs = append(inputs, line[0])
+		outputs = append(outputs, line[1])
+	}
+
+	return inputs, outputs
+}
+
 func ReadStringInput(input string) []string {
 	var arr []string
 	f, err := os.Open(input)
