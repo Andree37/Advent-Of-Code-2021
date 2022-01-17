@@ -153,7 +153,7 @@ func ReadNumberInlineInput(input string) []int {
 	return arr
 }
 
-func ReadNumbersAndBoard(input string) ([]int, []Board) {
+func ReadNumbersAndBoard(input string, boardSize int) ([]int, []Board) {
 	var inputs []int
 	var boards []Board
 
@@ -197,12 +197,12 @@ func ReadNumbersAndBoard(input string) ([]int, []Board) {
 				}
 			}
 
-			if len(currentRow) == 5 {
+			if len(currentRow) == boardSize {
 				board.Rows = append(board.Rows, currentRow)
 				currentRow = []Cell{}
 			}
 
-			if len(board.Rows) == 5 {
+			if len(board.Rows) == boardSize {
 				boards = append(boards, board)
 				board = Board{}
 			}
@@ -212,6 +212,50 @@ func ReadNumbersAndBoard(input string) ([]int, []Board) {
 	}
 
 	return inputs, boards
+}
+
+func ReadBoards(input string, boardSize int) Board {
+
+	f, err := os.Open(input)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer func(f *os.File) {
+		err := f.Close()
+		if err != nil {
+			log.Fatal(err)
+		}
+	}(f)
+
+	scanner := bufio.NewScanner(f)
+
+	board := Board{Found: false}
+	var currentRow []Cell
+
+	for scanner.Scan() {
+		line := scanner.Text()
+		for j := 0; j < boardSize; j++ {
+			if line != "" {
+				intVar, err := strconv.Atoi(string(line[j]))
+				if err != nil {
+					log.Fatal(err)
+				}
+				currentRow = append(currentRow, Cell{Found: false, Value: intVar})
+
+			}
+		}
+
+		if len(currentRow) == boardSize {
+			board.Rows = append(board.Rows, currentRow)
+			currentRow = []Cell{}
+		}
+
+		if len(board.Rows) == boardSize {
+			board = Board{}
+		}
+	}
+
+	return board
 }
 
 func ReadLines(input string) []Line {

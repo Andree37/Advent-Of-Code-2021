@@ -83,7 +83,7 @@ func findBoard(inputs []int, boards []advent.Board) (advent.Board, []advent.Cell
 }
 
 func parts() {
-	inputs, boards := advent.ReadNumbersAndBoard("day04/day04.txt")
+	inputs, boards := advent.ReadNumbersAndBoard("day04/day04.txt", 5)
 
 	foundBoard, _, lastNum := findBoard(inputs, boards)
 
