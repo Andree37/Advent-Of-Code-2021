@@ -24,6 +24,10 @@ type Board struct {
 	Found bool
 }
 
+type Grid struct {
+	Rows [][]int
+}
+
 type Point struct {
 	X int
 	Y int
@@ -214,7 +218,7 @@ func ReadNumbersAndBoard(input string, boardSize int) ([]int, []Board) {
 	return inputs, boards
 }
 
-func ReadBoards(input string, boardSize int) Board {
+func ReadBoards(input string, boardSize int) Grid {
 
 	f, err := os.Open(input)
 	if err != nil {
@@ -229,8 +233,8 @@ func ReadBoards(input string, boardSize int) Board {
 
 	scanner := bufio.NewScanner(f)
 
-	board := Board{Found: false}
-	var currentRow []Cell
+	board := Grid{}
+	var currentRow []int
 
 	for scanner.Scan() {
 		line := scanner.Text()
@@ -240,18 +244,13 @@ func ReadBoards(input string, boardSize int) Board {
 				if err != nil {
 					log.Fatal(err)
 				}
-				currentRow = append(currentRow, Cell{Found: false, Value: intVar})
-
+				currentRow = append(currentRow, intVar)
 			}
 		}
 
 		if len(currentRow) == boardSize {
 			board.Rows = append(board.Rows, currentRow)
-			currentRow = []Cell{}
-		}
-
-		if len(board.Rows) == boardSize {
-			board = Board{}
+			currentRow = []int{}
 		}
 	}
 
